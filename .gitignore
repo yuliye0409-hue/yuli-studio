@@ -1,0 +1,9 @@
+# Local preview and generated inspection files
+tmp/
+tmp_pdf/
+pdfcheck/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
