@@ -36,6 +36,19 @@ function setActive(index, direction = 1, immediate = false) {
     if (immediate) card.style.transition = 'none';
     else card.style.removeProperty('transition');
   });
+  const activeCard = visibleCards[activeIndex];
+  const activeImage = activeCard?.querySelector('img');
+  if (activeImage) {
+    activeImage.loading = 'eager';
+    activeImage.fetchPriority = 'high';
+    activeImage.decode?.().catch(() => {});
+  }
+  const nextCard = visibleCards[(activeIndex + 1) % visibleCards.length];
+  const nextImage = nextCard?.querySelector('img');
+  if (nextImage && !nextImage.complete) {
+    const preload = new Image();
+    preload.src = nextImage.currentSrc || nextImage.src;
+  }
   updateCounter();
   if (immediate) window.requestAnimationFrame(() => allCards.forEach((card) => card.style.removeProperty('transition')));
 }

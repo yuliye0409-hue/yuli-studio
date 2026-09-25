@@ -36,17 +36,20 @@ if (launch && metalCanvas && !reducedMotion) {
   const target = { x: 50, y: 50 };
   const head = { x: 50, y: 50 };
   const points = [];
-  const TRAIL_LIFE = 1450;
+  const TRAIL_LIFE = 900;
+  const MAX_POINTS = 90;
+  const FRAME_INTERVAL = 1000 / 30;
   let canvasWidth = 0;
   let canvasHeight = 0;
   let pixelRatio = 1;
   let lastFrame = performance.now();
+  let isVisible = true;
 
   const resizeCanvas = () => {
     const bounds = launch.getBoundingClientRect();
     canvasWidth = Math.max(1, bounds.width);
     canvasHeight = Math.max(1, bounds.height);
-    pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    pixelRatio = Math.min(window.devicePixelRatio || 1, 1.25);
     if (canvasWidth * pixelRatio > 3840) pixelRatio = 3840 / canvasWidth;
     if (canvasHeight * pixelRatio > 2160) pixelRatio = Math.min(pixelRatio, 2160 / canvasHeight);
     [metalCanvas, maskCanvas, textureCanvas].forEach((canvas) => {
@@ -103,6 +106,11 @@ if (launch && metalCanvas && !reducedMotion) {
   resizeCanvas();
 
   const render = (now) => {
+    if (!isVisible) return;
+    if (now - lastFrame < FRAME_INTERVAL) {
+      requestAnimationFrame(render);
+      return;
+    }
     const delta = Math.min(40, now - lastFrame);
     lastFrame = now;
     head.x += (target.x - head.x) * Math.min(1, delta * .009);
@@ -118,6 +126,7 @@ if (launch && metalCanvas && !reducedMotion) {
         angle: previous ? Math.atan2(head.y - previous.y, head.x - previous.x) : 0,
         seed: Math.random() * Math.PI * 2
       });
+      if (points.length > MAX_POINTS) points.shift();
     }
     while (points.length > 0 && now - points[0].born > TRAIL_LIFE) points.shift();
 
@@ -174,5 +183,13 @@ if (launch && metalCanvas && !reducedMotion) {
     context.globalCompositeOperation = 'source-over';
     requestAnimationFrame(render);
   };
+  const visibilityObserver = new IntersectionObserver(([entry]) => {
+    isVisible = entry.isIntersecting;
+    if (isVisible) {
+      lastFrame = performance.now();
+      requestAnimationFrame(render);
+    }
+  }, { threshold: 0.02 });
+  visibilityObserver.observe(launch);
   requestAnimationFrame(render);
 }
