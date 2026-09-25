@@ -180,6 +180,77 @@ button { font: inherit; }
   .launch__meta--left { left: 6vw; max-width: 180px; line-height: 1.5; }
   .launch__skip { right: 6vw; }
 }
+
+/* Flat review mode: keep the stage visible while motion is intentionally disabled. */
+.work-screen,
+.work-screen * {
+  animation: none !important;
+  transition: none !important;
+}
+.work-screen { background: #000; }
+.work-header,
+.work-toolbar { display: none; }
+.work-grid {
+  inset: 0;
+  display: block;
+  padding: 0;
+  overflow: hidden;
+}
+.work-grid::before {
+  top: 21%;
+  bottom: 21%;
+  background: #d1cdcd;
+}
+.work-card,
+.work-card.work-card--wide,
+.work-card.work-card--tall {
+  inset: 14vh 11vw 20vh;
+  display: none;
+  visibility: visible;
+  opacity: 1;
+  transform: none !important;
+}
+.work-card.is-active { display: block; }
+.work-card__button,
+.work-card__media {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.work-card__button { padding: 0; }
+.work-card__media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 0;
+  background: #090909;
+  box-shadow: none;
+}
+.work-card__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: none !important;
+  filter: none !important;
+}
+.work-card__sheen { display: none; }
+.work-card__meta {
+  right: 0;
+  bottom: -52px;
+  left: 0;
+}
+.work-screen__progress { z-index: 5; }
+.work-screen__scroll-hint { display: none; }
+@media (max-width: 720px) {
+  .work-card,
+  .work-card.work-card--wide,
+  .work-card.work-card--tall { inset: 19vh 7vw 22vh; }
+  .work-grid::before { top: 24%; bottom: 24%; }
+  .work-card__meta { bottom: -48px; }
+}
 @media (prefers-reduced-motion: reduce) {
   .launch__word span, .launch__studio { animation-duration: .01ms; animation-delay: 0ms; }
   .metal-field__canvas, .launch__meta, .launch__skip { transition-duration: .01ms; transition-delay: 0ms; }
