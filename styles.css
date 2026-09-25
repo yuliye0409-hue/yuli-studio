@@ -197,6 +197,7 @@ button { font: inherit; }
   background: #0b0c0d;
   overflow: hidden;
   overscroll-behavior: contain;
+  touch-action: none;
   scroll-margin-top: 0;
 }
 .work-screen::before { position: absolute; z-index: 5; top: 0; right: 5vw; left: 5vw; height: 1px; background: rgba(247,247,244,.16); content: ''; }
@@ -335,4 +336,77 @@ button { font: inherit; }
   .profile-details div { margin-top: 17px; }
   .profile-details div:first-child { margin-top: 0; }
   .profile-screen__footer { position: static; font-size: 8px; }
+}
+
+/* =========================================================
+   07. HORIZONTAL PROJECT REEL / Video-inspired browsing
+   ========================================================= */
+.work-grid {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  gap: clamp(22px, 3.2vw, 58px);
+  padding: 10vh 14vw 18vh;
+  overflow: visible;
+  transform: translate3d(var(--gallery-x, 0px), 0, 0);
+  will-change: transform;
+}
+.work-screen.is-dragging .work-grid { cursor: grabbing; }
+.work-grid { cursor: grab; }
+.work-card,
+.work-card.work-card--wide,
+.work-card.work-card--tall {
+  position: relative;
+  inset: auto;
+  flex: 0 0 clamp(340px, 55vw, 860px);
+  width: auto;
+  height: min(66vh, 700px);
+  visibility: visible;
+  opacity: .42;
+  transform: scale(.76);
+  transition: opacity .45s ease, transform .6s cubic-bezier(.16, 1, .3, 1);
+}
+.work-card.is-active { opacity: 1; transform: scale(1); z-index: 2; }
+.work-card[hidden] { display: none; }
+.work-card__button { height: 100%; }
+.work-card__media {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  background: #080909;
+  border: 1px solid rgba(247,247,244,.14);
+  box-shadow: 0 22px 70px rgba(0,0,0,.35);
+}
+.work-card:not(.is-active) .work-card__media { filter: saturate(.72) brightness(.72); }
+.work-card.is-active .work-card__media { border-color: rgba(247,247,244,.3); }
+.work-card__media img { object-fit: contain; }
+.work-card__meta {
+  position: relative;
+  inset: auto;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 9px 16px;
+  padding-top: 15px;
+}
+.work-card__meta > span { grid-column: 1 / -1; }
+.work-card__meta strong { font-size: 16px; }
+.work-card__sheen { z-index: 1; }
+.work-screen__scroll-hint { right: 2vw; }
+
+@media (max-width: 720px) {
+  .work-grid {
+    gap: 18px;
+    padding: 26vh 10vw 20vh;
+  }
+  .work-card,
+  .work-card.work-card--wide,
+  .work-card.work-card--tall {
+    flex-basis: 78vw;
+    height: min(52vh, 500px);
+  }
+  .work-card__meta strong { font-size: 14px; }
+  .work-screen__scroll-hint { display: block; right: 2.5vw; }
 }
