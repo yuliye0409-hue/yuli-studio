@@ -243,6 +243,37 @@ button { font: inherit; }
 .work-screen__scroll-hint b { margin-top: 9px; color: var(--orange); font-size: 15px; font-weight: 400; }
 
 /* =========================================================
+   06. PROFILE / Concise resume with measurable outcomes
+   ========================================================= */
+.profile-screen { position: relative; min-height: 100svh; padding: 0 5vw; overflow: hidden; color: var(--white); background: #0d0f10; }
+.profile-screen::before { position: absolute; top: 0; right: 5vw; left: 5vw; height: 1px; background: rgba(247,247,244,.16); content: ''; }
+.profile-screen__topline { position: absolute; z-index: 2; top: 42px; right: 5vw; left: 5vw; display: flex; justify-content: space-between; color: rgba(247,247,244,.48); font-size: 9px; letter-spacing: 1.8px; }
+.profile-screen__topline a { color: rgba(247,247,244,.54); text-decoration: none; transition: color .25s ease; }
+.profile-screen__topline a:hover { color: var(--orange); }
+.profile-layout { display: grid; grid-template-columns: minmax(300px, .82fr) minmax(420px, 1.18fr); align-items: center; gap: 7vw; min-height: 100svh; padding: 88px 0 62px; }
+.profile-visual { position: relative; align-self: stretch; display: flex; align-items: flex-end; justify-content: center; min-height: 640px; overflow: hidden; }
+.profile-visual__halo { position: absolute; bottom: 7%; left: 50%; width: min(30vw, 430px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(53,105,111,.36), rgba(19,23,40,.1) 58%, transparent 72%); transform: translateX(-50%); filter: blur(6px); }
+.profile-visual img { position: relative; z-index: 1; display: block; width: 100%; height: 100%; object-fit: contain; object-position: center bottom; mix-blend-mode: screen; }
+.profile-visual__caption { position: absolute; z-index: 2; bottom: 4%; left: 50%; color: rgba(247,247,244,.42); font-size: 9px; letter-spacing: 1.7px; transform: translateX(-50%); white-space: nowrap; }
+.profile-copy { max-width: 720px; padding-bottom: 20px; }
+.profile-kicker { margin: 0 0 20px; color: var(--orange); font-size: 10px; letter-spacing: 2.1px; }
+.profile-copy h2 { margin: 0; font-size: clamp(60px, 7.5vw, 124px); font-weight: 700; letter-spacing: -.065em; line-height: .82; }
+.profile-copy h2 em { color: var(--orange); font-style: normal; }
+.profile-role { margin: 30px 0 13px; color: rgba(247,247,244,.82); font-size: 15px; }
+.profile-summary { max-width: 530px; margin: 0; color: rgba(247,247,244,.52); font-size: 13px; line-height: 1.8; }
+.profile-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 46px 0 34px; padding: 17px 0; border-top: 1px solid rgba(247,247,244,.17); border-bottom: 1px solid rgba(247,247,244,.17); }
+.profile-stat { min-width: 0; }
+.profile-stat strong { display: block; color: var(--white); font-size: clamp(27px, 3vw, 48px); font-weight: 500; letter-spacing: -.06em; line-height: 1; }
+.profile-stat strong span { color: var(--orange); font-size: .55em; }
+.profile-stat small { display: block; margin-top: 9px; color: rgba(247,247,244,.42); font-size: 9px; line-height: 1.4; }
+.profile-details { display: grid; grid-template-columns: 1fr 1.45fr; gap: 19px 28px; }
+.profile-details div:first-child { grid-column: 1 / -1; }
+.profile-details span { color: rgba(247,247,244,.32); font-size: 8px; letter-spacing: 1.6px; }
+.profile-details p { margin: 6px 0 0; color: rgba(247,247,244,.64); font-size: 12px; line-height: 1.65; }
+.profile-screen__footer { position: absolute; right: 5vw; bottom: 17px; left: 5vw; display: flex; justify-content: space-between; color: rgba(247,247,244,.35); font-size: 8px; letter-spacing: 1.6px; }
+.profile-screen__footer b { margin-left: 8px; color: var(--orange); font-size: 14px; font-weight: 400; }
+
+/* =========================================================
    06. PROJECT MODAL / Full image review
    ========================================================= */
 .project-modal { position: fixed; inset: 0; z-index: 20; display: grid; place-items: stretch; visibility: hidden; opacity: 0; transition: visibility 0s .45s, opacity .45s ease; }
@@ -268,6 +299,10 @@ button { font: inherit; }
   .project-modal__panel { grid-template-columns: 1fr; width: calc(100% - 32px); height: min(88vh, 760px); overflow-y: auto; }
   .project-modal__image { min-height: 42vh; }
   .project-modal__copy { min-height: 240px; padding: 30px; border-top: 1px solid rgba(247,247,244,.12); border-left: 0; }
+  .profile-layout { grid-template-columns: .75fr 1.25fr; gap: 4vw; }
+  .profile-visual { min-height: 560px; }
+  .profile-copy h2 { font-size: clamp(52px, 8vw, 90px); }
+  .profile-stats { grid-template-columns: repeat(2, 1fr); gap: 18px 12px; margin-top: 34px; }
 }
 @media (max-width: 720px) {
   .launch__enter { left: 6vw; bottom: 6vh; font-size: 8px; letter-spacing: 1.35px; }
@@ -287,4 +322,17 @@ button { font: inherit; }
   .work-screen__progress { top: 50%; right: 6vw; }
   .work-screen__scroll-hint { display: none; }
   .work-footer { right: 6vw; bottom: 12px; left: 6vw; }
+  .profile-screen { min-height: auto; padding: 0 6vw 70px; }
+  .profile-screen__topline { top: 28px; right: 6vw; left: 6vw; font-size: 8px; letter-spacing: 1.25px; }
+  .profile-layout { display: flex; align-items: stretch; flex-direction: column; gap: 22px; min-height: auto; padding: 92px 0 30px; }
+  .profile-visual { height: 46vh; min-height: 300px; }
+  .profile-visual__caption { bottom: 1%; }
+  .profile-copy h2 { font-size: clamp(58px, 18vw, 92px); }
+  .profile-role { margin-top: 22px; font-size: 13px; }
+  .profile-summary { font-size: 12px; }
+  .profile-stats { margin: 30px 0 28px; }
+  .profile-details { display: block; }
+  .profile-details div { margin-top: 17px; }
+  .profile-details div:first-child { margin-top: 0; }
+  .profile-screen__footer { position: static; font-size: 8px; }
 }
