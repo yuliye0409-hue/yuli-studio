@@ -1,39 +1,93 @@
 const workSection = document.querySelector('#work');
 const enterWork = document.querySelector('#work-enter');
-const cards = [...document.querySelectorAll('.work-card')];
+const allCards = [...document.querySelectorAll('.work-card')];
 const filters = [...document.querySelectorAll('.work-filter')];
+const currentLabel = document.querySelector('#work-current');
+const totalLabel = document.querySelector('#work-total');
 const modal = document.querySelector('#project-modal');
 const modalImage = document.querySelector('#modal-image');
 const modalType = document.querySelector('#modal-type');
 const modalTitle = document.querySelector('#modal-title');
 const modalDescription = document.querySelector('#modal-description');
 const modalIndex = document.querySelector('#modal-index');
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let visibleCards = allCards;
+let activeIndex = 0;
+let wheelLocked = false;
+let touchStartY = null;
 
-enterWork?.addEventListener('click', () => {
-  workSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-});
+enterWork?.addEventListener('click', () => workSection?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' }));
 
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('is-visible');
-      revealObserver.unobserve(entry.target);
-    }
+function updateCounter() {
+  currentLabel.textContent = String(activeIndex + 1).padStart(2, '0');
+  totalLabel.textContent = String(visibleCards.length).padStart(2, '0');
+}
+
+function setActive(index, direction = 1) {
+  if (!visibleCards.length) return;
+  activeIndex = (index + visibleCards.length) % visibleCards.length;
+  allCards.forEach((card) => card.classList.remove('is-active'));
+  const card = visibleCards[activeIndex];
+  card.classList.add('is-active');
+  card.style.setProperty('--card-rx', '0deg');
+  card.style.setProperty('--card-ry', `${direction * 0.01}deg`);
+  updateCounter();
+}
+
+function switchProject(direction) {
+  if (wheelLocked || !workSection || !workSection.matches(':hover')) return;
+  wheelLocked = true;
+  setActive(activeIndex + direction, direction);
+  window.setTimeout(() => { wheelLocked = false; }, reducedMotion ? 20 : 650);
+}
+
+workSection?.addEventListener('wheel', (event) => {
+  if (Math.abs(event.deltaY) < 8) return;
+  event.preventDefault();
+  switchProject(event.deltaY > 0 ? 1 : -1);
+}, { passive: false });
+
+workSection?.addEventListener('touchstart', (event) => {
+  touchStartY = event.touches[0]?.clientY ?? null;
+}, { passive: true });
+workSection?.addEventListener('touchend', (event) => {
+  if (touchStartY === null) return;
+  const endY = event.changedTouches[0]?.clientY ?? touchStartY;
+  const distance = touchStartY - endY;
+  touchStartY = null;
+  if (Math.abs(distance) > 36) switchProject(distance > 0 ? 1 : -1);
+}, { passive: true });
+
+function setFilter(filter) {
+  const category = filter.dataset.filter;
+  visibleCards = category === 'all' ? allCards : allCards.filter((card) => card.dataset.category === category);
+  allCards.forEach((card) => {
+    card.hidden = !visibleCards.includes(card);
+    card.classList.remove('is-active');
   });
-}, { threshold: .12 });
-cards.forEach((card, index) => {
-  card.style.transitionDelay = `${Math.min(index * .045, .36)}s`;
-  revealObserver.observe(card);
+  activeIndex = 0;
+  setActive(0);
+}
+
+filters.forEach((filter) => {
+  filter.addEventListener('click', () => {
+    filters.forEach((item) => {
+      const active = item === filter;
+      item.classList.toggle('is-active', active);
+      item.setAttribute('aria-selected', String(active));
+    });
+    setFilter(filter);
+  });
 });
 
-cards.forEach((card) => {
+allCards.forEach((card) => {
   const media = card.querySelector('.work-card__media');
   card.addEventListener('pointermove', (event) => {
     const bounds = media.getBoundingClientRect();
     const x = (event.clientX - bounds.left) / bounds.width - .5;
     const y = (event.clientY - bounds.top) / bounds.height - .5;
-    media.style.setProperty('--card-rx', `${(-y * 3.6).toFixed(2)}deg`);
-    media.style.setProperty('--card-ry', `${(x * 4.6).toFixed(2)}deg`);
+    media.style.setProperty('--card-rx', `${(-y * 2.2).toFixed(2)}deg`);
+    media.style.setProperty('--card-ry', `${(x * 3).toFixed(2)}deg`);
   });
   card.addEventListener('pointerleave', () => {
     media.style.setProperty('--card-rx', '0deg');
@@ -42,24 +96,8 @@ cards.forEach((card) => {
   card.querySelector('.work-card__button')?.addEventListener('click', () => openProject(card));
 });
 
-filters.forEach((filter) => {
-  filter.addEventListener('click', () => {
-    const category = filter.dataset.filter;
-    filters.forEach((item) => {
-      const active = item === filter;
-      item.classList.toggle('is-active', active);
-      item.setAttribute('aria-selected', String(active));
-    });
-    cards.forEach((card) => {
-      const visible = category === 'all' || card.dataset.category === category;
-      card.hidden = !visible;
-      if (visible) requestAnimationFrame(() => card.classList.add('is-visible'));
-    });
-  });
-});
-
 function openProject(card) {
-  const cardIndex = cards.indexOf(card) + 1;
+  const cardIndex = allCards.indexOf(card) + 1;
   modalImage.src = card.dataset.image;
   modalImage.alt = `${card.dataset.title} 项目预览`;
   modalType.textContent = card.dataset.type;
@@ -81,4 +119,9 @@ function closeProject() {
 modal?.querySelectorAll('[data-modal-close]').forEach((button) => button.addEventListener('click', closeProject));
 window.addEventListener('keydown', (event) => {
   if (event.key === 'Escape' && modal?.classList.contains('is-open')) closeProject();
+  if (modal?.classList.contains('is-open')) return;
+  if (event.key === 'ArrowDown' || event.key === 'ArrowRight') switchProject(1);
+  if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') switchProject(-1);
 });
+
+setFilter(document.querySelector('.work-filter.is-active') || filters[0]);

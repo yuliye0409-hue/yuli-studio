@@ -57,4 +57,5 @@
 - 作品素材统一放在 `assets/portfolio/`。
 - 在 `.work-card` 上修改 `data-category`、`data-title`、`data-type`、`data-description` 和 `data-image`，即可添加或替换作品。
 - `work.js` 负责筛选、卡片悬停视差、滚动揭示和项目详情弹层。
+- 作品区现在是单屏项目浏览器：每次只展示一个项目，滚轮、方向键或手机上滑切换项目；图片使用 `object-fit: contain`，完整展示原始比例，不裁切。
 - 简历入口使用 `assets/portfolio/resume.pdf`，替换该文件即可更新下载内容。
